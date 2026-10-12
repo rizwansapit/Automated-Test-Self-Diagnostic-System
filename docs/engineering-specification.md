@@ -50,9 +50,9 @@ The simulation will evaluate test results against predefined reference values an
 
 
 
-\*\*Reference Drawing:\*\* ECM-080-050  
+\*\*Reference Drawing:\*\* ECM-080-050
 
-\*\*Revision:\*\* A  
+\*\*Revision:\*\* A
 
 \*\*Units:\*\* Millimetres (mm), unless otherwise specified.
 
@@ -296,9 +296,9 @@ The simulation will evaluate test results against predefined reference values an
 
 
 
-\*\*Reference Drawing:\*\* ELS-012-001  
+\*\*Reference Drawing:\*\* ELS-012-001
 
-\*\*Revision:\*\* A  
+\*\*Revision:\*\* A
 
 \*\*Circuit Type:\*\* Low-voltage DC concept circuit.
 
@@ -414,6 +414,76 @@ The simulation will evaluate test results against predefined reference values an
 
 
 
+\### 5.5 Electrical Output Acceptance Criteria — Simulation
+
+
+
+The electrical output test uses a nominal output voltage of 12.0 V DC with an illustrative acceptance range of 11.4–12.6 V DC (±5%).
+
+
+
+\- \*\*PASS:\*\* Measured output is within the inclusive range of 11.4–12.6 V DC.
+
+\- \*\*FAIL — BELOW\_LOWER\_LIMIT:\*\* Measured output is below 11.4 V DC.
+
+\- \*\*FAIL — ABOVE\_UPPER\_LIMIT:\*\* Measured output is above 12.6 V DC.
+
+
+
+The test assumes a correct 12 V DC input, an intact fuse, a closed switch, correct wiring, and a defined load condition. Open-fuse and open-switch scenarios are expected to interrupt the output and must be evaluated against their respective test conditions.
+
+
+
+LED status and external output voltage must be evaluated separately.
+
+
+
+These limits and test scenarios are illustrative project simulation criteria only. They are not validated production specifications. Actual electrical acceptance limits must be confirmed against the approved schematic, component specifications, and applicable engineering requirements before real hardware testing.
+
+
+
+\### 5.6 Diagnostic Outcome — Normal Operation
+
+
+
+\*\*Test ID:\*\* ELEC-0001
+
+
+
+\*\*Test condition:\*\*
+
+\- Input voltage: 12.0 V DC
+
+\- Fuse F1: Intact
+
+\- Switch SW1: Closed
+
+\- Simulated output voltage: 12.0 V DC
+
+
+
+\*\*Expected outcome:\*\*
+
+\- Test result: PASS
+
+\- Diagnostic status: NORMAL\_OPERATION
+
+
+
+\*\*Acceptance rule:\*\* The test passes when the simulated output voltage is within the inclusive range of 11.4–12.6 V DC.
+
+
+
+\*\*Diagnostic rule:\*\* NORMAL\_OPERATION may be assigned when the defined normal operating conditions are satisfied and the output voltage passes the acceptance rule.
+
+
+
+This scenario is an educational simulation and does not validate actual hardware performance.
+
+
+
+
+
 \## 6. Verification Rules
 
 
@@ -451,6 +521,4 @@ The simulation will evaluate test results against predefined reference values an
 \- The listed values must be verified against approved engineering documentation before use in real hardware testing or manufacturing.
 
 \- The simulation must not be represented as a validated test system for Lam Research equipment or any other commercial production equipment.
-
-
 
