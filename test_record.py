@@ -18,33 +18,44 @@ electrical_test = {
 	"unit": "V DC"
 }
 
+#simulate electrical output based on component conditions
+if (
+	electrical_test['fuse_status'] == "intact"
+	and electrical_test['switch_status'] == "closed"
+):
+	electrical_test['measured_value'] = electrical_test['input_voltage']
+else:
+	electrical_test['measured_value'] = 0.0
+
 #condition for electrical test
 if electrical_test["lower_limit"]<= electrical_test["measured_value"] <= electrical_test["upper_limit"]:
 		electrical_test["result"] = "PASS"
 else:
 		electrical_test["result"] = "FAIL"
 
-#condition for electrical diagnostic
-if electrical_test["measured_value"] < electrical_test["lower_limit"]:
-		electrical_test["diagnostic"] = "BELOW_LOWER_LIMIT"
-elif electrical_test["measured_value"] > electrical_test["upper_limit"]:
-		electrical_test["diagnostic"] = "ABOVE_UPPER_LIMIT"
-else:
-		electrical_test["diagnostic"] = "WITHIN_SPECIFICATION"
 
-#condition for electrical diagnosis
+# Condition for electrical diagnosis
 if electrical_test["fuse_status"] == "open":
-		electrical_test["diagnostic"] = "OPEN_FUSE"
+    electrical_test["diagnostic"] = "OPEN_FUSE"
+
 elif electrical_test["switch_status"] == "open":
-		electrical_test["diagnostic"] = "SWITCH_OPEN"
-elif electrical_test["input_voltage"] != 12.0:
-		electrical_test["diagnostic"] = "INPUT_VOLTAGE_ABNORMAL"
-elif (
-	electrical_test["fuse_status"] == "intact"
-	and electrical_test["switch_status"] == "closed"
-	and electrical_test["result"] == "PASS"
-):
-	electrical_test["diagnostic"] = "NORMAL_OPERATION"
+    electrical_test["diagnostic"] = "SWITCH_OPEN"
+
+elif electrical_test["input_voltage"] < 11.4:
+    electrical_test["diagnostic"] = "INPUT_VOLTAGE_ABNORMAL"
+
+elif electrical_test["input_voltage"] > 12.6:
+    electrical_test["diagnostic"] = "INPUT_VOLTAGE_ABNORMAL"
+
+elif electrical_test["measured_value"] < electrical_test["lower_limit"]:
+    electrical_test["diagnostic"] = "BELOW_LOWER_LIMIT"
+
+elif electrical_test["measured_value"] > electrical_test["upper_limit"]:
+    electrical_test["diagnostic"] = "ABOVE_UPPER_LIMIT"
+
+else:
+    electrical_test["diagnostic"] = "NORMAL_OPERATION"
+
 
 print("\n====== ELECTRICAL TEST REPORT ======")
 print(f"Test ID 		:{electrical_test['test_id']}")
