@@ -23,9 +23,7 @@ The project demonstrates a structured engineering test workflow:
 
 ## Project Status
 
-**Current Milestone: Step 3 — Automated Recovery, Technician Escalation and Retest History (Implemented and Tested in Simulation)**
-
-Step 1 and Step 2 have been implemented, tested through simulation, and pushed to the `main` branch on GitHub. Step 3 introduces simulated automated recovery, technician escalation, and separate database records for initial and final electrical test results.
+**Current Milestone: Automated Recovery, Technician Escalation and Retest History (Implemented and Tested in Simulation)**
 
 ### Completed Features
 
