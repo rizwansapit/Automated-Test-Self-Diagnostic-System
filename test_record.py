@@ -52,9 +52,69 @@ elif electrical_test["measured_value"] < electrical_test["lower_limit"]:
 
 elif electrical_test["measured_value"] > electrical_test["upper_limit"]:
     electrical_test["diagnostic"] = "ABOVE_UPPER_LIMIT"
+else:
+	electrical_test['diagnostic'] = "NORMAL_OPERATION"
+
+#Preserve the initial electrical test result
+initial_electrical_test = electrical_test.copy()
+initial_electrical_test['timestamp'] = datetime.now()
+
+# Failure decision logic
+if electrical_test["result"] == "PASS":
+    electrical_test["action_mode"] = "NO_ACTION"
 
 else:
-    electrical_test["diagnostic"] = "NORMAL_OPERATION"
+    print("\nSYSTEM FAIL")
+
+    if (
+        electrical_test["fuse_status"] == "intact"
+        and electrical_test["switch_status"] == "closed"
+    ):
+        electrical_test["action_mode"] = "AUTOMATED_RECOVERY"
+        print("Continuing to Automated Recovery...")
+
+        # Automated voltage adjustment simulation
+        max_attempts = 5
+        attempt = 0
+
+        while (
+            not (
+                electrical_test["lower_limit"]
+                <= electrical_test["measured_value"]
+                <= electrical_test["upper_limit"]
+            )
+            and attempt < max_attempts
+        ):
+            if electrical_test["measured_value"] < electrical_test["lower_limit"]:
+                electrical_test["measured_value"] += 1.0
+
+            elif electrical_test["measured_value"] > electrical_test["upper_limit"]:
+                electrical_test["measured_value"] -= 1.0
+
+            attempt += 1
+
+            print(
+                f"Recovery attempt {attempt}: "
+                f"{electrical_test['measured_value']} V DC"
+            )
+
+        if (
+            electrical_test["lower_limit"]
+            <= electrical_test["measured_value"]
+            <= electrical_test["upper_limit"]
+        ):
+            electrical_test["result"] = "PASS"
+            electrical_test["diagnostic"] = "NORMAL_OPERATION"
+            print("Automated Recovery Successful")
+
+        else:
+            electrical_test["result"] = "FAIL"
+            electrical_test["action_mode"] = "TECHNICIAN_MODE"
+            print("Technician Mode: Recovery Failed")
+
+    else:
+        electrical_test["action_mode"] = "TECHNICIAN_MODE"
+        print("Technician Mode")
 
 
 print("\n====== ELECTRICAL TEST REPORT ======")
@@ -135,7 +195,31 @@ try:
                 test_record
             )
 
-            # 2. Save electrical test record
+
+            # 2. Save initial electrical test record if it failed
+            if initial_electrical_test["result"] == "FAIL":
+                cur.execute(
+                    """
+                    INSERT INTO test_history (
+                        test_id, timestamp, test_parameter,
+                        measured_value, nominal_value,
+                        lower_limit, upper_limit, unit,
+                        result, diagnostic
+                    )
+                    VALUES (
+                        %(test_id)s, %(timestamp)s, %(test_parameter)s,
+                        %(measured_value)s, %(nominal_value)s,
+                        %(lower_limit)s, %(upper_limit)s, %(unit)s,
+                        %(result)s, %(diagnostic)s
+                    )
+                    """,
+                    {
+                        **initial_electrical_test,
+                        "test_parameter": "Switched Output Voltage"
+                    }
+                )
+
+            # 3. Save final electrical test record
             cur.execute(
                 """
                 INSERT INTO test_history (
@@ -158,7 +242,7 @@ try:
             )
 
     print("Mechanical test records saved.")
-    print("Electrical test record saved.")
+    print("Electrical test records saved.")
 
 except Exception as error:
     print("Database save failed:", error)
